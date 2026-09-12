@@ -269,4 +269,3 @@ docker compose -f scripts/docker-mssql.yaml stop sqlserver
 | แก้ `.env` แล้วค่าไม่เปลี่ยน | ใช้ `up -d --force-recreate` กับ Service ที่เกี่ยวข้อง |
 | Template แจ้งจะเขียนทับไฟล์ | มีโปรเจกต์แล้ว ไม่ต้องสร้างใหม่หรือใช้ `--force` |
 
-อย่าใช้ `docker compose down -v` หากต้องการเก็บข้อมูลเดิม เพราะตัวเลือก `-v` ลบ named volumes ที่ Compose จัดการ
