@@ -1,0 +1,27 @@
+services:
+  go-sdk:
+    image: golang:1.26
+    working_dir: /workspace
+    volumes:
+      - ../backend/person-read-api:/workspace
+      - go_modules:/go/pkg/mod
+      - go_build:/root/.cache/go-build
+    profiles:
+      - tools
+
+  read-api:
+    image: golang:1.26
+    working_dir: /workspace
+    volumes:
+      - ../backend/person-read-api:/workspace
+      - go_modules:/go/pkg/mod
+      - go_build:/root/.cache/go-build
+    env_file:
+      - .env
+    ports:
+      - "5002:8080"
+    command: ["go", "run", "."]
+
+volumes:
+  go_modules:
+  go_build:

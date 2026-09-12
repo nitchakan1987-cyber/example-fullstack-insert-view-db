@@ -1,0 +1,26 @@
+services:
+  dotnet-sdk:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /workspace
+    volumes:
+      - ../backend:/workspace
+    profiles:
+      - tools
+
+  write-api:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /workspace/Person.WriteApi
+    volumes:
+      - ../backend:/workspace
+    ports:
+      - "5001:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    command:
+      - dotnet
+      - run
+      - --no-launch-profile
+      - --urls
+      - http://0.0.0.0:8080

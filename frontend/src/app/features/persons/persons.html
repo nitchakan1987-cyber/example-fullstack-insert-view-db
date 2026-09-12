@@ -1,0 +1,152 @@
+<section class="person-page">
+  <header class="page-header">IT 01-1 — ข้อมูลบุคคล</header>
+  @if (successMessage()) {
+  <p role="status" class="success-message">{{ successMessage() }}</p>
+  }
+  <div class="page-content">
+    <div class="toolbar">
+      <button type="button" class="button" (click)="openAdd(personDialog)">
+        Add
+      </button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>ชื่อ-สกุล</th>
+          <th>ที่อยู่</th>
+          <th>วันเกิด</th>
+          <th>อายุ</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @if (loading()) {
+        <tr>
+          <td colspan="6" class="empty-message">
+            กำลังโหลดข้อมูล...
+          </td>
+        </tr>
+        } @else if (loadError()) {
+        <tr>
+          <td colspan="6" class="empty-message">
+            <p role="alert" class="error-message">
+              {{ loadError() }}
+            </p>
+
+            <button type="button" class="button" (click)="loadPersons()">
+              ลองใหม่
+            </button>
+          </td>
+        </tr>
+        } @else {
+        @for (person of persons(); track person.id) {
+        <tr>
+          <td>{{ person.id }}</td>
+          <td>{{ person.firstName }} {{ person.lastName }}</td>
+          <td class="address-cell">{{ person.address }}</td>
+          <td>{{ formatBirthDate(person.birthDate) }}</td>
+          <td>{{ person.age }}</td>
+          <td>
+            <button type="button" class="button" [disabled]="viewLoading()" (click)="openView(person.id, viewDialog)">
+              View
+            </button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="6" class="empty-message">
+            ยังไม่มีข้อมูล กด Add เพื่อเพิ่มข้อมูลบุคคล
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<dialog #personDialog class="person-dialog" aria-labelledby="dialog-title"
+  (cancel)="saving() && $event.preventDefault()">
+  <h2 id="dialog-title">เพิ่มข้อมูลบุคคล</h2>
+
+  <div class="name-fields">
+    <label>
+      ชื่อ
+      <input type="text" [(ngModel)]="firstName" maxlength="100" autofocus />
+    </label>
+
+    <label>
+      นามสกุล
+      <input type="text" [(ngModel)]="lastName" maxlength="100" />
+    </label>
+  </div>
+
+  <label>
+    วันเกิด
+    <input type="date" [(ngModel)]="birthDate" [max]="today" />
+  </label>
+
+  <p>อายุ: {{ age === null ? '-' : age }} ปี</p>
+
+  <label>
+    ที่อยู่
+    <textarea [(ngModel)]="address" rows="4" maxlength="1000"></textarea>
+  </label>
+  @if (saveError()) {
+  <p role="alert" class="error-message">{{ saveError() }}</p>
+  }
+  <div class="dialog-actions">
+    <button type="button" class="button" [disabled]="!canSave || saving()" (click)="save(personDialog)">
+      {{ saving() ? 'กำลังบันทึก...' : 'บันทึก' }}
+    </button>
+
+    <button type="button" class="button cancel-button" [disabled]="saving()" (click)="personDialog.close()">
+      ยกเลิก
+    </button>
+  </div>
+</dialog>
+
+<dialog #viewDialog class="person-dialog" aria-labelledby="view-title">
+  <h2 id="view-title">รายละเอียดข้อมูลบุคคล</h2>
+
+  @if (viewLoading()) {
+  <p role="status">กำลังโหลดรายละเอียด...</p>
+  } @else if (viewError()) {
+  <p role="alert" class="error-message">
+    {{ viewError() }}
+  </p>
+  } @else if (selectedPerson(); as person) {
+  <div class="name-fields">
+    <label>
+      ชื่อ
+      <input type="text" [value]="person.firstName" readonly />
+    </label>
+
+    <label>
+      นามสกุล
+      <input type="text" [value]="person.lastName" readonly />
+    </label>
+  </div>
+
+  <label>
+    วันเกิด
+    <input type="text" [value]="formatBirthDate(person.birthDate)" readonly />
+  </label>
+
+  <p>อายุ: {{ person.age }} ปี</p>
+
+  <label>
+    ที่อยู่
+    <textarea rows="4" [value]="person.address" readonly></textarea>
+  </label>
+  }
+
+  <div class="dialog-actions">
+    <button type="button" class="button cancel-button" (click)="viewDialog.close()">
+      ปิด
+    </button>
+  </div>
+</dialog>
