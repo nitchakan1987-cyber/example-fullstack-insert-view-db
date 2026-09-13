@@ -1,0 +1,13 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# Angular dependencies and build output
+**/node_modules/
+**/.angular/
+**/dist/
+
+# Local secrets
+.env
+.env.*
+!.env.example
