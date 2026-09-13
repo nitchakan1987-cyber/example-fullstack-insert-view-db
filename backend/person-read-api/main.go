@@ -22,11 +22,11 @@ func main() {
 
 	log.Println("SQL Server connected")
 
-	server := newServer(db)
+	handler  := newServer(db)
 
 	server := &http.Server{
 		Addr:              ":8080",
-		Handler:           server,
+		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
